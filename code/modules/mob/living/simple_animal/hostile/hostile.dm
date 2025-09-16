@@ -175,7 +175,7 @@
 			return FALSE
 		if(SA.pacify_aura)
 			return FALSE
-	return TRUE
+	return !loneliness_affected(A)
 
 /mob/living/simple_animal/hostile/proc/PickTarget(var/list/Targets)//Step 3, pick amongst the possible, attackable targets
 	if(target != null)//If we already have a target, but are told to pick again, calculate the lowest distance between all possible, and pick from the lowest distance targets
@@ -226,13 +226,13 @@
 		for(var/datum/weakref/ref in friends)
 			if (ref.get() == L)
 				return 0
-		
+
 		//don't attack things which pacify (eg pillows or capybaras)
 		if(istype(L,/mob/living/simple_animal))
 			var/mob/living/simple_animal/SA = L
 			if (SA.pacify_aura)
 				return 0
-				
+
 		return 1
 	if(isobj(the_target))
 		//if(the_target.type in wanted_objects)
@@ -503,6 +503,7 @@
 					 /obj/structure/girder,
 					 /obj/structure/rack,
 					 /obj/structure/railing,
+					 /obj/machinery/door/table,
 					 /obj/machinery/door/window,
 					 /obj/item/tape,
 					 /obj/item/toy/balloon/inflated/decoy,

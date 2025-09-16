@@ -1,11 +1,9 @@
 //things that try to kill you.
 var/list/junglemobs_hostile=list(
-	/mob/living/simple_animal/hostile/giant_spider,
-	/mob/living/simple_animal/hostile/giant_spider/hunter,
-	// /mob/living/simple_animal/hostile/giant_spider/nurse, turns out this makes fuckloads of queen spiders everywhere. oops.
+	/mob/living/simple_animal/hostile/giant_spider/jungle,
 	/mob/living/simple_animal/hostile/bear/dinosaur,
 	/mob/living/simple_animal/hostile/bear/panther,
-	/mob/living/simple_animal/hostile/bear/brownbear,
+	/mob/living/simple_animal/hostile/bear/brownbear/jungle,
 )
 
 //things that could kill you
@@ -16,8 +14,9 @@ var/list/junglemobs_dangerous=list(
 //things that won't kill you
 var/list/junglemobs_safe=list(
 /mob/living/simple_animal/hostile/lizard/frog,
-/mob/living/simple_animal/parrot,
+/mob/living/simple_animal/parrot/jungle,
 /mob/living/simple_animal/capybara/jungle,
+/mob/living/carbon/monkey,
 )
 
 
@@ -41,7 +40,7 @@ var/list/junglemobs_safe=list(
 	icon_state="jungle_mob_randomany"
 
 /obj/abstract/map/spawner/jungle_any/multi/New()	
-	amount=rand(1,9)
+	amount=rand(4,7)
 	..()
 
 
@@ -57,7 +56,7 @@ var/list/junglemobs_safe=list(
 	icon_state="jungle_mob_frenmany"
 
 /obj/abstract/map/spawner/jungle_fren/multi/New()	
-	amount=rand(1,9)
+	amount=rand(4,7)
 	..()
 
 
@@ -73,7 +72,7 @@ var/list/junglemobs_safe=list(
 	icon_state="jungle_mob_hostilemany"
 
 /obj/abstract/map/spawner/jungle_hostile/multi/New()	
-	amount=rand(1,9)
+	amount=rand(4,7)
 	..()	
 
 
@@ -89,5 +88,5 @@ var/list/junglemobs_safe=list(
 	icon_state="jungle_mob_dangermany"
 
 /obj/abstract/map/spawner/jungle_danger/multi/New()	
-	amount=rand(1,9)
+	amount=rand(4,7)
 	..()		

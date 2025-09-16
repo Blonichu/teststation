@@ -22,18 +22,19 @@
 
 	layer = PIPING_LAYER(layer, piping_layer)
 
-/obj/machinery/atmospherics/pipe/proc/mass_colouration(var/mass_colour)
+/obj/machinery/atmospherics/pipe/proc/mass_colouration(mass_colour,transparency)
 	if (findtext(mass_colour,"#"))
 		var/datum/pipeline/pipeline = parent
-		var/list/update_later = list()
-		for(var/obj/machinery/atmospherics/pipe in pipeline.members)
-			if(pipe.can_be_coloured)
-				pipe.color = mass_colour
-		for(var/obj/machinery/atmospherics/pipe in pipeline.edges)
-			pipe.update_icon()
-		update_later -= pipeline.edges
-		for(var/obj/machinery/atmospherics/pipe in update_later)
-			pipe.update_icon(1)
+		spawn()
+			for(var/obj/machinery/atmospherics/pipe in pipeline.members)
+				if(pipe.can_be_coloured)
+					pipe.color = mass_colour
+					pipe.transparent = transparency
+					pipe.update_icon()
+				CHECK_TICK
+			for(var/obj/machinery/atmospherics/pipe in pipeline.edges)
+				pipe.update_icon()
+				CHECK_TICK
 
 /obj/machinery/atmospherics/pipe/singularity_pull(/obj/machinery/singularity/S, size)
 	return
@@ -52,6 +53,16 @@
 		overlays.Cut()
 		overlays += centre_overlay
 	..()
+	update_gas_underlay()
+
+/obj/machinery/atmospherics/pipe/proc/update_gas_underlay()
+	if(transparent)
+		var/list/gases_found = get_visible_gases()
+		if(gases_found.len)
+			for(var/direction in cardinal)
+				if(initialize_directions & direction)
+					for(var/gasfound in gases_found)
+						underlays += image('icons/obj/atmospherics/gas_overlays.dmi',src,gasfound,layer,direction)
 
 /obj/machinery/atmospherics/pipe/t_scanner_expose()
 	if (exposed())
@@ -107,6 +118,24 @@
 
 	..()
 
+/obj/machinery/atmospherics/pipe/examine(mob/user)
+	. = ..()
+	if(transparent)
+		var/list/gases_found = get_visible_gases()
+		if(gases_found.len)
+			to_chat(user,"<span class='notice'>This [src.name] is filled with [english_list(gases_found)]!")
+
+/obj/machinery/atmospherics/pipe/proc/get_visible_gases()
+	. = list()
+	var/datum/gas_mixture/gases = return_air()
+	if(gases)
+		if(gases.molar_density(GAS_SLEEPING) > 1 / CELL_VOLUME)
+			. += list("nitrous oxide")
+		if(gases.molar_density(GAS_PLASMA) > MOLES_PLASMA_VISIBLE / CELL_VOLUME)
+			. += list("plasma")
+		if(gases.molar_density(GAS_CRYOTHEUM) > MOLES_CRYOTHEUM_VISIBLE / CELL_VOLUME)
+			. += list("cryotheum")
+
 /obj/machinery/atmospherics/pipe/simple
 	icon = 'icons/obj/pipes.dmi'
 	icon_state = "intact"
@@ -149,7 +178,7 @@
 			initialize_directions = SOUTH|WEST
 	..()
 
-/obj/machinery/atmospherics/pipe/simple/buildFrom(var/mob/usr,var/obj/item/pipe/pipe)
+/obj/machinery/atmospherics/pipe/simple/buildFrom(var/mob/user,var/obj/item/pipe/pipe)
 	dir = pipe.dir
 	initialize_directions = pipe.get_pipe_dir()
 	var/turf/T = loc
@@ -157,7 +186,7 @@
 	update_planes_and_layers()
 	initialize(1)
 	if(!node1&&!node2)
-		to_chat(usr, "<span class='warning'>There's nothing to connect this pipe section to! A pipe segment must be connected to at least one other object!</span>")
+		to_chat(user, "<span class='warning'>There's nothing to connect this pipe section to! A pipe segment must be connected to at least one other object!</span>")
 		return 0
 	update_icon()
 	build_network()
@@ -323,7 +352,8 @@
 	else
 		underlays.Cut()
 		icon_state = "intact"
-		alpha = invisibility ? 128 : 255
+		alpha = transparent || invisibility ? 128 : 255
+		update_gas_underlay()
 		if(!adjacent_procd)
 			for(var/obj/machinery/atmospherics/node in node_list)
 				if(node.update_icon_ready && !(istype(node,/obj/machinery/atmospherics/pipe/simple)))
@@ -453,7 +483,7 @@
 	layer = PIPE_LAYER
 	var/global/image/manifold_centre = image('icons/obj/pipes.dmi',"manifold_centre")
 
-/obj/machinery/atmospherics/pipe/manifold/buildFrom(var/mob/usr,var/obj/item/pipe/pipe)
+/obj/machinery/atmospherics/pipe/manifold/buildFrom(var/mob/user,var/obj/item/pipe/pipe)
 	dir = pipe.dir
 	initialize_directions = pipe.get_pipe_dir()
 	var/turf/T = loc
@@ -462,7 +492,7 @@
 
 	initialize(1)
 	if(!node1&&!node2&&!node3)
-		to_chat(usr, "<span class='warning'>There's nothing to connect this manifold to! A pipe segment must be connected to at least one other object!</span>")
+		to_chat(user, "<span class='warning'>There's nothing to connect this manifold to! A pipe segment must be connected to at least one other object!</span>")
 		return 0
 	update_icon() // Skipped in initialize()!
 	build_network()
@@ -703,7 +733,7 @@
 	var/global/image/manifold4w_centre = image('icons/obj/pipes.dmi',"manifold4w_centre")
 
 
-/obj/machinery/atmospherics/pipe/manifold4w/buildFrom(var/mob/usr,var/obj/item/pipe/pipe)
+/obj/machinery/atmospherics/pipe/manifold4w/buildFrom(var/mob/user,var/obj/item/pipe/pipe)
 	dir = pipe.dir
 	initialize_directions = pipe.get_pipe_dir()
 	var/turf/T = loc
@@ -711,7 +741,7 @@
 	update_planes_and_layers()
 	initialize(1)
 	if(!node1 && !node2 && !node3 && !node4)
-		to_chat(usr, "<span class='warning'>There's nothing to connect this manifold to! A pipe segment must be connected to at least one other object!</span>")
+		to_chat(user, "<span class='warning'>There's nothing to connect this manifold to! A pipe segment must be connected to at least one other object!</span>")
 		return 0
 	update_icon()
 	build_network()
@@ -985,7 +1015,7 @@
 /obj/machinery/atmospherics/pipe/layer_manifold/setPipingLayer(var/new_layer = PIPING_LAYER_DEFAULT)
 	piping_layer = PIPING_LAYER_DEFAULT
 
-/obj/machinery/atmospherics/pipe/layer_manifold/buildFrom(var/mob/usr,var/obj/item/pipe/pipe)
+/obj/machinery/atmospherics/pipe/layer_manifold/buildFrom(var/mob/user,var/obj/item/pipe/pipe)
 	dir = pipe.dir
 	initialize_directions = pipe.get_pipe_dir()
 	var/turf/T = loc
@@ -993,7 +1023,7 @@
 	update_planes_and_layers()
 	initialize(1)
 	if(!(locate(/obj/machinery/atmospherics) in layer_nodes) && !other_node)
-		to_chat(usr, "<span class='warning'>There's nothing to connect this manifold to! A pipe segment must be connected to at least one other object!</span>")
+		to_chat(user, "<span class='warning'>There's nothing to connect this manifold to! A pipe segment must be connected to at least one other object!</span>")
 		return 0
 	update_icon()
 	build_network()
@@ -1195,7 +1225,7 @@
 /obj/machinery/atmospherics/pipe/layer_adapter/setPipingLayer(var/new_layer = PIPING_LAYER_DEFAULT)
 	piping_layer = new_layer
 
-/obj/machinery/atmospherics/pipe/layer_adapter/buildFrom(var/mob/usr,var/obj/item/pipe/pipe)
+/obj/machinery/atmospherics/pipe/layer_adapter/buildFrom(var/mob/user,var/obj/item/pipe/pipe)
 	dir = pipe.dir
 	initialize_directions = pipe.get_pipe_dir()
 	var/turf/T = loc
@@ -1203,7 +1233,7 @@
 	update_planes_and_layers()
 	initialize(1)
 	if(!mid_node && !layer_node)
-		to_chat(usr, "<span class='warning'>There's nothing to connect this adapter to! A pipe segment must be connected to at least one other object!</span>")
+		to_chat(user, "<span class='warning'>There's nothing to connect this adapter to! A pipe segment must be connected to at least one other object!</span>")
 		return 0
 	update_icon()
 	build_network()

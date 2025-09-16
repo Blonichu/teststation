@@ -986,6 +986,23 @@ its easier to just keep the beam vertical.
 /atom/proc/get_cell()
 	return
 
+/atom/proc/get_cell_charge(var/mob/living/silicon/robot/R)
+	if(istype(R))
+		var/obj/item/weapon/cell/Rcell = R.get_cell()
+		if(Rcell)
+			return Rcell.charge
+	return 0
+
+/atom/proc/use_cell_charge(var/mob/living/silicon/robot/R,var/amount,var/silent=FALSE)
+	if(istype(R))
+		var/obj/item/weapon/cell/Rcell = R.get_cell()
+		if(!Rcell || Rcell.charge < amount)
+			if(!silent)
+				to_chat(R, "<span class='warning'>You don't have enough charge to use \the [src].</span>")
+			return FALSE
+		return Rcell.use(amount)
+	return FALSE
+
 /atom/proc/on_syringe_injection(var/mob/user, var/obj/item/weapon/reagent_containers/syringe/tool)
 	if(!reagents)
 		return INJECTION_RESULT_FAIL
@@ -1106,70 +1123,6 @@ its easier to just keep the beam vertical.
 	if (blood_color && blood_DNA && blood_DNA.len)
 		return TRUE
 	return FALSE
-
-//Single overlay moody light
-/atom/proc/update_moody_light(var/moody_icon = 'icons/lighting/moody_lights.dmi', var/moody_state = "white", var/moody_alpha = 255, var/moody_color = "#ffffff", var/offX = 0, var/offY = 0)
-	overlays -= moody_light
-	var/area/here = get_area(src)
-	if (here && here.dynamic_lighting)
-		moody_light = image(moody_icon, src, moody_state)
-		moody_light.appearance_flags = RESET_COLOR|RESET_ALPHA|RESET_TRANSFORM
-		moody_light.plane = LIGHTING_PLANE
-		moody_light.blend_mode = BLEND_ADD
-		moody_light.alpha = moody_alpha
-		moody_light.color = moody_color
-		moody_light.pixel_x = offX
-		moody_light.pixel_y = offY
-		overlays += moody_light
-	luminosity = max(luminosity, 2)
-
-/atom/proc/kill_moody_light()
-	overlays -= moody_light
-	luminosity = initial(luminosity)
-	moody_light = null
-
-//Multi-overlay moody lights. don't combine both procs on a single atom, use one or the other.
-/atom/proc/update_moody_light_index(var/index, var/moody_icon = 'icons/lighting/moody_lights.dmi', var/moody_state = "white", var/moody_alpha = 255, var/moody_color = "#ffffff", var/offX = 0, var/offY = 0, var/image_override = null)
-	if (!index)
-		return
-	if (isnull(moody_lights))
-		moody_lights = list()
-	if (index in moody_lights)
-		overlays -= moody_lights[index]
-	var/area/here = get_area(src)
-	if (here && here.dynamic_lighting)
-		if (image_override)
-			moody_light = image_override
-		else
-			moody_light = image(moody_icon, src, moody_state)
-		moody_light.appearance_flags |= RESET_COLOR|RESET_ALPHA|RESET_TRANSFORM
-		moody_light.plane = LIGHTING_PLANE
-		moody_light.blend_mode = BLEND_ADD
-		moody_light.alpha = moody_alpha
-		moody_light.color = moody_color
-		moody_light.pixel_x = offX
-		moody_light.pixel_y = offY
-		moody_lights[index] = moody_light
-		overlays += moody_lights[index]
-	luminosity = max(luminosity, 2)
-
-/atom/proc/kill_moody_light_index(var/index)
-	if (isnull(moody_lights))
-		moody_lights = list()
-	if (!index || !(index in moody_lights))
-		return
-	overlays -= moody_lights[index]
-	moody_lights.Remove(index)
-	if (moody_lights.len <= 0)
-		luminosity = initial(luminosity)
-
-/atom/proc/kill_moody_light_all()
-	if (isnull(moody_lights))
-		moody_lights = list()
-	for (var/i in moody_lights)
-		overlays -= moody_lights[i]
-		moody_lights.Remove(i)
-	luminosity = initial(luminosity)
 
 /atom/proc/silicate_act(var/atom/A, var/mob/user)
 	return FALSE

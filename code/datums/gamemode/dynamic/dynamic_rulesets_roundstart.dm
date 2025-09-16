@@ -148,14 +148,25 @@
 	weight = BASE_RULESET_WEIGHT
 	weight_category = "Changeling"
 	cost = 18
+	var/additional_cost = 9
+	var/maximum_lings = 2
+	var/pop_per_ling = 12
 	requirements = list(80,70,60,60,30,20,10,10,10,10)
 	high_population_requirement = 30
 
 // -- Currently a copypaste of traitors. Could be fixed to be less copy & paste.
 /datum/dynamic_ruleset/roundstart/changeling/choose_candidates()
-	var/mob/M = pick(candidates)
-	assigned += M
-	candidates -= M
+	//Check to see how many lings the ruleset supports and if there are enough candidates.
+	var/num_changelings = min(min(floor(mode.roundstart_pop_ready / pop_per_ling), maximum_lings), candidates.len)
+	for (var/i = 1 to num_changelings)
+		if(i > 1)
+			if((mode.threat > additional_cost))
+				mode.spend_threat(additional_cost)
+			else
+				break
+		var/mob/M = pick(candidates)
+		assigned += M
+		candidates -= M
 	return (assigned.len > 0)
 
 /datum/dynamic_ruleset/roundstart/changeling/execute()
@@ -713,6 +724,21 @@ Assign your candidates in choose_candidates() instead.
 		if (player.mind.assigned_role in command_positions)
 			head_check++
 	return (head_check >= required_heads)
+
+// Removes headrev candidates that are at an extreme risk of being outed as headrevs
+/datum/dynamic_ruleset/roundstart/delayed/revs/trim_candidates()
+	..()
+	for(var/mob/living/carbon/human/P in candidates) //required_type in the parent proc already filters non-humans
+		if(P.handcuffed) // We don't want people who are being dragged to the brig to become headrevs
+			candidates.Remove(P)
+			continue
+		var/area/A = get_area(P)
+		if(A && istype(A, /area/security)) // We also don't want people who are arrested to become headrevs
+			candidates.Remove(P)
+			continue
+		if(P.is_loyalty_implanted()) // No turning loyalty implanted people into headrevs, in case they were implanted shortly after game start
+			candidates.Remove(P)
+			continue
 
 /datum/dynamic_ruleset/roundstart/delayed/revs/choose_candidates()
 	var/max_canditates = 4

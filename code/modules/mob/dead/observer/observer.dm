@@ -253,6 +253,7 @@ Works together with spawning an observer, noted above.
 			visible.icon_state = "visible1"
 		else
 			visible.icon_state = "visible0"
+
 /mob/proc/ghostize(var/flags = GHOST_CAN_REENTER,var/deafmute = 0)
 	if(key && !(copytext(key,1,2)=="@"))
 		if((src && src.client && src.client.holder))

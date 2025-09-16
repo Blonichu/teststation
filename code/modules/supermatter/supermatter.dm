@@ -284,12 +284,15 @@
 
 		if(damage > explosion_point)
 			for(var/mob/living/mob in living_mob_list)
-				if(mob.z != src.z)//only make it effect mobs on the current Z level.
+				var/turf/T = get_turf(mob)
+				if(!T) // Mob is in nullspace
+					continue
+				if(T.z != src.z)//only make it effect mobs on the current Z level.
 					continue
 				if(istype(mob, /mob/living/carbon/human))
-					//Hilariously enough, running into a closet should make you get hit the hardest.
-					mob:hallucination += max(50, min(300, DETONATION_HALLUCINATION * sqrt(1 / (get_dist(mob, src) + 1)) ) )
-				var/rads = DETONATION_RADS * sqrt( 1 / (get_dist(mob, src) + 1) )
+					var/mob/living/carbon/human/H = mob
+					H.hallucination += clamp(DETONATION_HALLUCINATION * sqrt(1 / (get_dist(T, src) + 1)), 50, 300)
+				var/rads = DETONATION_RADS * sqrt( 1 / (get_dist(T, src) + 1) )
 				mob.apply_radiation(rads, RAD_EXTERNAL)
 
 			explode()
@@ -298,20 +301,20 @@
 
 	//Ok, get the air from the turf
 	var/datum/gas_mixture/env = L.return_air()
-	
+
 	//Remove gas from surrounding area
 	var/datum/gas_mixture/removed = env.remove_volume(gasefficency * CELL_VOLUME)
 
 	var/radonenergyfactor=1.0+removed[GAS_RADON]*RADON_EXCITATION_FACTOR //wowza power. prepare your butts for delams.
-	
+
 	power+=emitterpower*radonenergyfactor //radon affects emitter power (as well as temp+atmos related power gen.)
-	
+
 	if(!removed || !removed.total_moles)
 		damage += max((power-1600)/10, 0)
 		power = min(power, 1600)
 		return 1
 
-	
+
 
 	damage_archived = damage
 	damage = max( damage + ( (removed.temperature - 800) / 150 ) , 0 )

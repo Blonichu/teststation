@@ -133,6 +133,7 @@ var/list/admin_verbs_fun = list(
 	/client/proc/add_centcomm_order,
 	/client/proc/apes,
 	/client/proc/force_next_map,
+	/client/proc/rig_crew_score,
 	)
 var/list/admin_verbs_spawn = list(
 	/datum/admins/proc/spawn_atom, // Allows us to spawn instances
@@ -807,6 +808,7 @@ var/list/admin_verbs_mod = list(
 				send2adminirc("[key_name(src, showantag = FALSE)] deadminned themself - no more non-AFK admins online. - [admin_number_afk] AFK.")
 				send2admindiscord("[key_name(src, showantag = FALSE)] deadminned themself. **No more non-AFK admins online.** - **[admin_number_afk]** AFK", TRUE)
 		deadmin()
+		winset(src, null, list("browser-options"="-devtools"))
 		verbs += /client/proc/readmin
 		deadmins += ckey
 		to_chat(src, "<span class='interface'>You are now a normal player.</span>")
@@ -1101,12 +1103,35 @@ var/list/admin_verbs_mod = list(
 
 	stop_all_media()
 
+var/list/fax_presets = list(
+	"Centcomm" = {"<!DOCTYPE html>
+<html>
+<body style="background-color:darkblue;">
+
+<h1><center><font color="white">NANOTRASEN CENTRAL COMMAND</font></center></h1>
+<center><img src="http://ss13.moe/wiki/images/1/17/NanoTrasen_Logo.png"></center>
+<p><center><font color="white">\[MESSAGE BODY GOES HERE\]</center></font></p>
+<p><center><font color="white">\[MESSAGE BODY GOES HERE\]</center></font></p>
+
+</body>
+</html>"},
+	"Internal Affairs" = {"<html><style>body {color: #000000; background: #ccffff;}
+h1 {color: #000000; font-size:30px;}
+fieldset {width:140px;}
+</style><body><center><img src="http://ss13.moe/wiki/images/1/17/NanoTrasen_Logo.png"> <h1>ATTN: Internal Affairs</h1></center><BR>
+\[MESSAGE BODY GOES HERE\]
+<BR><BR><I>Central Command</I>
+</body></html>"},
+	"Blank" = ""
+)
+
 /client/proc/SendCentcommFax()
 	set	category = "Fun"
 	set name = "Send Fax"
 	set desc = "Sends a fax to all fax machines."
 
-	var/sent = input(src, "Please enter a message send via secure connection. NOTE: BBCode does not work, but HTML tags do! Use <br> for line breaks.", "Outgoing message from Centcomm", "") as message|null
+	var/preset = input(src,"Which preset to use?","Preset formatting") as null|anything in fax_presets
+	var/sent = input(src, "Please enter a message send via secure connection. NOTE: BBCode does not work, but HTML tags do! Use <br> for line breaks.", "Outgoing message from Centcomm", fax_presets[preset]) as message|null
 	if(!sent)
 		return
 

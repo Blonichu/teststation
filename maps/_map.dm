@@ -32,6 +32,10 @@
 	var/zAsteroid = 5
 	var/zDeepSpace = 6
 
+	var/zAdditionalStationZlevel = -1 // -1 because surely nothing will ever go to Z -1, right? why not null? because nullspace
+
+	var/skip_hobo_shack = FALSE // if true, skips hobo shack generation. set to TRUE if you want to map your own custom one for the map.
+
 	//Holomap offsets
 	var/list/holomap_offset_x = list()
 	var/list/holomap_offset_y = list()
@@ -97,7 +101,6 @@
 
 	var/snow_theme = FALSE
 	var/can_enlarge = TRUE //can map elements expand this map? turn off for surface maps
-	var/datum/climate/climate = null //use for weather cycle
 	var/has_engines = FALSE // Is the map a space ship with big engines?
 	var/broken_lights = TRUE //broken lights roundstart
 	var/can_have_robots = TRUE
@@ -250,14 +253,12 @@ var/global/list/accessable_z_levels = list()
 	base_turf = /turf/unsimulated/floor/jungle/dirt
 	base_area = /area/surface/jungle/landing //hacky workaround.
 	movementJammed = TRUE
-	transitionLoops = TRUE
 
 /datum/zLevel/jungleunderground
 	name = "jungle underground"
 	base_turf = /turf/unsimulated/floor/jungle/bedrock
 	base_area = /area/surface/jungle/underground
 	movementJammed = TRUE
-	transitionLoops = TRUE	
 
 //for Horizon
 /datum/zLevel/hyperspace

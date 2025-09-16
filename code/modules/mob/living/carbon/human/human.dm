@@ -13,6 +13,9 @@
 	var/stepstaken = 0
 	var/modulo_step = 2
 	var/fartCooldown = 20 SECONDS
+	//why are these here? Because Vox are humans wearing chickensuits.
+	var/original_vox_tone
+	var/feather_regen = 0
 
 /mob/living/carbon/human/dummy
 	real_name = "Test Dummy"
@@ -2105,7 +2108,7 @@ var/datum/record_organ //This is just a dummy proc, not storing any variables he
 
 	if(!can_be_fat)
 		species.anatomy_flags &= ~CAN_BE_FAT
-	
+
 	species.blood_color = get_random_colour()
 	species.flesh_color = get_random_colour()
 
@@ -2198,7 +2201,7 @@ var/datum/record_organ //This is just a dummy proc, not storing any variables he
 	// ...means no flavor text for you. Otherwise, good to go.
 	return TRUE
 
-/mob/living/carbon/human/proc/zombify(mob/master, var/retain_mind = TRUE, var/crabzombie = FALSE)
+/mob/living/carbon/human/proc/zombify(mob/master, var/retain_mind = TRUE, var/crabzombie = FALSE, var/cannot_evolve)
 	if(crabzombie)
 		dropBorers()
 		var/mob/living/simple_animal/hostile/necro/zombie/headcrab/T = new(get_turf(src), master, (retain_mind ? src : null))
@@ -2210,10 +2213,11 @@ var/datum/record_organ //This is just a dummy proc, not storing any variables he
 		return T
 	else if(stat == DEAD || InCritical())
 		dropBorers()
-		var/mob/living/simple_animal/hostile/necro/zombie/turned/T = new(get_turf(src), master, (retain_mind ? src : null))
+		var/mob/living/simple_animal/hostile/necro/zombie/turned/T = new(get_turf(src), master, (retain_mind ? src : null), cannot_evolve = cannot_evolve)
 		if(master && master.faction)
 			T.faction = "\ref[master]"
-		T.add_spell(/spell/aoe_turf/necro/zombie/evolve)
+		if(T.can_evolve)
+			T.add_spell(/spell/aoe_turf/necro/zombie/evolve)
 		if(isgrey(src))
 			T.icon_state = "mauled_laborer"
 			T.icon_living = "mauled_laborer"
@@ -2254,6 +2258,9 @@ var/datum/record_organ //This is just a dummy proc, not storing any variables he
 		playsound(src, 'sound/weapons/authenticrichtertackleslide.ogg', 70, 0)
 		anim(target = src, a_icon = 'icons/effects/effects.dmi', flick_anim = "castlevania_tackle_flick", plane = ABOVE_LIGHTING_PLANE)
 		return "richter tackle"
+	if (src.charge_gene_active)
+		anim(target=src)
+		return "charge"
 
 /mob/living/carbon/human/throw_item(var/atom/target,var/atom/movable/what=null)
 	var/atom/movable/item = get_active_hand()
@@ -2585,11 +2592,11 @@ var/datum/record_organ //This is just a dummy proc, not storing any variables he
 			return list(/datum/butchering_product/teeth/human)
 		if ("Tajaran")
 			return list(/datum/butchering_product/teeth/human, /datum/butchering_product/skin/cat/lots)
+		if ("Vox")
+			return list(/datum/butchering_product/teeth/human, /datum/butchering_product/feathers/vox)
 	return list()
 		/*	Missing Sprites, pls contribute
 
-		if ("Vox")
-			return list(
 		if ("Diona")
 			return list(
 		if ("Skeletal Vox")

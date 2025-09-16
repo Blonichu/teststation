@@ -582,6 +582,7 @@
 /obj/machinery/computer/security/telescreen/entertainment{
 	pixel_y = 32
 	},
+/obj/machinery/computer/tetris,
 /turf/simulated/floor{
 	icon_state = "floorgrime"
 	},
@@ -19367,11 +19368,11 @@
 /turf/simulated/floor/plating,
 /area/maintenance/fpmaint)
 "aHU" = (
-/obj/structure/windoor_assembly/secure{
-	dir = 2
-	},
 /obj/machinery/light_switch{
 	pixel_x = -27
+	},
+/obj/machinery/door/table/wood{
+	dir = 1
 	},
 /obj/structure/cable/yellow{
 	d1 = 1;
@@ -22769,7 +22770,7 @@
 	},
 /obj/structure/table/woodentable,
 /obj/item/weapon/cartridge/clown,
-/obj/item/toy/waterflower,
+/obj/item/clothing/accessory/waterflower,
 /obj/structure/cable/yellow{
 	d2 = 2;
 	icon_state = "0-2";
@@ -23400,13 +23401,13 @@
 	dir = 4;
 	icon_state = "pipe-c"
 	},
-/obj/machinery/atmospherics/pipe/simple/scrubbers/hidden{
-	dir = 6
-	},
 /obj/structure/cable/yellow{
 	d1 = 1;
 	d2 = 2;
 	icon_state = "1-2"
+	},
+/obj/machinery/atmospherics/pipe/manifold/scrubbers/hidden{
+	dir = 8
 	},
 /turf/simulated/floor/plating,
 /area/maintenance/fsmaint2)
@@ -30476,7 +30477,6 @@
 	},
 /obj/machinery/door/airlock/maintenance{
 	name = "Bar Storage";
-	req_access_txt = 0;
 	req_one_access_txt = "25;28"
 	},
 /obj/structure/disposalpipe/segment{
@@ -31400,10 +31400,7 @@
 	dir = 8;
 	name = "Firelock West"
 	},
-/obj/machinery/door/window/brigdoor{
-	dir = 8;
-	name = "Kitchen";
-	req_access = null;
+/obj/machinery/door/table/reinforced{
 	req_one_access_txt = "25;28;35"
 	},
 /turf/simulated/floor{
@@ -32053,14 +32050,12 @@
 /area/bridge)
 "biQ" = (
 /obj/machinery/atmospherics/pipe/simple/supply/hidden,
-/obj/machinery/door/window{
-	base_state = "right";
-	dir = 2;
-	name = "Bar Door";
-	req_one_access_txt = "25;28"
-	},
 /obj/machinery/light{
 	dir = 4
+	},
+/obj/machinery/door/table/reinforced{
+	dir = 1;
+	req_one_access_txt = "25;28"
 	},
 /turf/simulated/floor{
 	icon_state = "grimy"
@@ -32257,10 +32252,7 @@
 /obj/machinery/status_display{
 	pixel_y = 32
 	},
-/obj/machinery/door/window{
-	base_state = "right";
-	dir = 8;
-	name = "Library Desk Door";
+/obj/machinery/door/table/wood{
 	req_access_txt = "37"
 	},
 /turf/simulated/floor/wood,
@@ -34613,10 +34605,6 @@
 	},
 /obj/machinery/light{
 	dir = 8
-	},
-/obj/machinery/power/apc{
-	dir = 8;
-	pixel_x = -24
 	},
 /turf/simulated/floor,
 /area/hallway/primary/starboard)
@@ -42283,16 +42271,14 @@
 /turf/simulated/floor/wood,
 /area/crew_quarters/captain)
 "bCQ" = (
-/obj/machinery/door/window{
-	base_state = "right";
-	icon_state = "right";
-	name = "Captain's Desk Door";
-	req_access_txt = "20"
-	},
 /obj/machinery/atmospherics/pipe/simple/supply/hidden{
 	dir = 4
 	},
 /obj/machinery/light,
+/obj/machinery/door/table/wood{
+	req_access_txt = "20";
+	dir = 8
+	},
 /turf/simulated/floor/wood,
 /area/crew_quarters/captain)
 "bCR" = (
@@ -43400,9 +43386,8 @@
 	},
 /area/medical/medbay)
 "bEM" = (
-/obj/machinery/door/window{
+/obj/machinery/door/table/reinforced{
 	dir = 1;
-	name = "Medbay Reception";
 	req_access_txt = "5"
 	},
 /turf/simulated/floor{
@@ -43531,7 +43516,9 @@
 /turf/simulated/floor/plating,
 /area/maintenance/asmaint)
 "bEY" = (
-/obj/machinery/mech_bay_recharge_port,
+/obj/machinery/mech_bay_recharge_port{
+	dir = 4
+	},
 /obj/structure/cable/yellow{
 	d2 = 2;
 	icon_state = "0-2"
@@ -43560,7 +43547,7 @@
 /turf/simulated/floor/plating,
 /area/science/robotics)
 "bFc" = (
-/obj/machinery/computer/mech_bay_power_console,
+/obj/machinery/computer/mech_bay_power_console/autolink_west,
 /obj/structure/cable/yellow{
 	d2 = 2;
 	icon_state = "0-2"
@@ -70789,12 +70776,14 @@
 /turf/simulated/floor/plating,
 /area/maintenance/aft)
 "cCA" = (
-/obj/machinery/computer/mech_bay_power_console,
+/obj/machinery/computer/mech_bay_power_console/autolink_west,
 /obj/effect/decal/cleanable/cobweb2,
 /turf/simulated/floor/plating,
 /area/maintenance/aft)
 "cCB" = (
-/obj/machinery/mech_bay_recharge_port,
+/obj/machinery/mech_bay_recharge_port{
+	dir = 4
+	},
 /obj/structure/window/reinforced{
 	dir = 8
 	},
@@ -83932,7 +83921,9 @@
 	},
 /area/syndicate_mothership)
 "dbz" = (
-/obj/machinery/mech_bay_recharge_port,
+/obj/machinery/mech_bay_recharge_port{
+	dir = 4
+	},
 /turf/unsimulated/floor{
 	icon_state = "floor4"
 	},
@@ -87597,7 +87588,9 @@
 	},
 /area/centcom/test)
 "dlt" = (
-/obj/machinery/mech_bay_recharge_port,
+/obj/machinery/mech_bay_recharge_port{
+	dir = 4
+	},
 /turf/unsimulated/floor{
 	icon_state = "floor"
 	},
@@ -87630,7 +87623,7 @@
 	},
 /area/centcom/test)
 "dlx" = (
-/obj/machinery/computer/mech_bay_power_console,
+/obj/machinery/computer/mech_bay_power_console/autolink_west,
 /turf/unsimulated/floor{
 	icon_state = "floor"
 	},
@@ -91236,7 +91229,7 @@
 /turf/space,
 /area/centcom/specops)
 "dtw" = (
-/obj/machinery/computer/mech_bay_power_console,
+/obj/machinery/computer/mech_bay_power_console/autolink_west,
 /turf/unsimulated/floor{
 	icon_state = "dark"
 	},
@@ -91256,7 +91249,9 @@
 	},
 /area/centcom/specops)
 "dty" = (
-/obj/machinery/mech_bay_recharge_port,
+/obj/machinery/mech_bay_recharge_port{
+	dir = 4
+	},
 /turf/unsimulated/floor{
 	dir = 8;
 	icon_state = "dark-markings"
@@ -95373,7 +95368,7 @@
 /turf/space,
 /area)
 "dNg" = (
-/obj/effect/landmark/map_element/salvage_shuttle,
+/obj/effect/landmark/map_element/salvage_shuttle_spiders,
 /turf/space,
 /area)
 "dNv" = (
@@ -106140,7 +106135,9 @@
 	},
 /area/mine/explored)
 "eoW" = (
-/obj/machinery/mech_bay_recharge_port,
+/obj/machinery/mech_bay_recharge_port{
+	dir = 4
+	},
 /obj/structure/window/reinforced{
 	dir = 8
 	},
@@ -106170,7 +106167,7 @@
 	},
 /area/mine/explored)
 "eoY" = (
-/obj/machinery/computer/mech_bay_power_console,
+/obj/machinery/computer/mech_bay_power_console/autolink_west,
 /obj/effect/decal/warning_stripes{
 	icon_state = "unloading"
 	},
@@ -111400,7 +111397,7 @@
 /turf/simulated/floor,
 /area/mine/west_outpost)
 "ezJ" = (
-/obj/machinery/computer/mech_bay_power_console,
+/obj/machinery/computer/mech_bay_power_console/autolink_west,
 /obj/structure/window/reinforced{
 	dir = 4
 	},
@@ -111409,7 +111406,9 @@
 	},
 /area/mine/west_outpost)
 "ezK" = (
-/obj/machinery/mech_bay_recharge_port,
+/obj/machinery/mech_bay_recharge_port{
+	dir = 4
+	},
 /obj/structure/window/reinforced{
 	dir = 8
 	},
@@ -111968,7 +111967,7 @@
 /turf/simulated/floor/plating,
 /area/mine/production)
 "eBe" = (
-/obj/machinery/computer/mech_bay_power_console,
+/obj/machinery/computer/mech_bay_power_console/autolink_west,
 /obj/structure/window/reinforced{
 	dir = 4
 	},
@@ -111977,7 +111976,9 @@
 	},
 /area/mine/eva)
 "eBf" = (
-/obj/machinery/mech_bay_recharge_port,
+/obj/machinery/mech_bay_recharge_port{
+	dir = 4
+	},
 /obj/structure/window/reinforced{
 	dir = 8
 	},

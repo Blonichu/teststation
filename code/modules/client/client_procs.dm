@@ -338,7 +338,7 @@ var/updated_stats = 0
 		to_chat(src, "<span class='info'>Changelog has changed since your last visit.</span>")
 
 	//Set map label to correct map name
-	winset_wrapper(src, "rpane.mapb", "text=\"[map.nameLong]\"")
+	winset_wrapper("rpane.mapb", "text=\"[map.nameLong]\"")
 
 	if (round_end_info)
 		winset_wrapper("rpane.round_end", "is-visible=true")
@@ -357,7 +357,7 @@ var/updated_stats = 0
 		to_chat(src, "<span class='warning'>Unable to access asset cache browser, if you are using a custom skin file, please allow DS to download the updated version, if you are not, then make a bug report. This is not a critical issue but can cause issues with resource downloading, as it is impossible to know when extra resources arrived to you.</span>")
 	//This is down here because of the browse() calls in tooltip/New()
 	if(!tooltips)
-		tooltips = new /datum/tooltip(src)
+		tooltips = new /datum/tooltips(src)
 
 	fps = (prefs.get_pref(/datum/preference_setting/numerical/fps) < 0) ? RECOMMENDED_CLIENT_FPS : prefs.get_pref(/datum/preference_setting/numerical/fps)
 
@@ -807,8 +807,8 @@ NOTE:  You will only be polled about this role once per round. To change your ch
 /client/proc/handle_hear_voice(var/mob/origin)
 	if(prefs.get_pref(/datum/preference_setting/toggle/hear_voicesound))
 		if(issilicon(origin))
-			mob.playsound_local(get_turf(origin), get_sfx("voice-silicon"),50,1)
-		if(isvox(origin))
-			mob.playsound_local(get_turf(origin), get_sfx("voice-vox"),50,0)
+			mob.playsound_local(get_turf(origin), get_sfx("voice-silicon"),50,1,source = origin)
+		else if(isvox(origin))
+			mob.playsound_local(get_turf(origin), get_sfx("voice-vox"),50,0,source = origin)
 		else
-			mob.playsound_local(get_turf(origin), get_sfx("voice-human"),50,1)
+			mob.playsound_local(get_turf(origin), get_sfx("voice-human"),50,1,source = origin)
